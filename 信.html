@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 核心：微信手机端适配，禁止缩放，满屏显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>给浣浣的信❤️</title>
+    <style>
+        /* 全局样式重置，适配手机 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* 防止滚动 */
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif; /* 手机端友好字体 */
+        }
+        /* 烟花容器：初始满屏，黑色背景，烟花更明显 */
+        #fireworks {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+        /* 书信容器：初始隐藏，温馨浅米色背景，满屏适配 */
+        .letter-box {
+            width: 100%;
+            min-height: 100%;
+            padding: 30px 20px;
+            background: #fdf6e9; /* 浅米色，书信质感 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            display: none; /* 初始隐藏 */
+            overflow-y: auto; /* 内容过长可滚动 */
+        }
+        /* 书信文字样式：适配手机，行高舒适 */
+        .letter {
+            font-size: 17px;
+            line-height: 2; /* 行高，阅读不拥挤 */
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* 收信人：顶格，加粗，稍大字体 */
+        .letter .receiver {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        /* 正文：首行缩进2字符（手机端适配） */
+        .letter .content p {
+            text-indent: 2em; /* 首行缩进 */
+            margin-bottom: 15px;
+        }
+        /* 署名+日期：右对齐，间距 */
+        .letter .signature {
+            margin-top: 40px;
+            text-align: right;
+            font-size: 18px;
+        }
+        .letter .signature .name {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        /* 爱心颜色加深，更温馨 */
+        .heart {
+            color: #e63946;
+        }
+    </style>
+</head>
+<body>
+    <!-- 烟花容器：1.5秒后隐藏 -->
+    <div id="fireworks"></div>
+    <!-- 书信容器：烟花结束后显示 -->
+    <div class="letter-box">
+        <div class="letter">
+            <div class="receiver">浣浣：</div>
+            <div class="content">
+                <p>嘿嘿，傻浣浣，今年是我们认识的第一年哦<span class="heart">❤️</span>希望我们每一年都能一起度过。</p>
+                <p>你记得你在2026年1月29日晚的那封信吗？其实是一封很有意义的信哦，它表明了你对我的心意，给了我向你表白的勇气，所以我们能在一起啦。</p>
+                <p>以后不开心要说出来，我不是你身体里的小虫子，不能知道你心里到底在想些什么，我猜的也没这么准，但是你和我说我能立马去改，只有把错误去改正了，我们的情谊才能天长地久，乖哦。</p>
+                <p>原谅我伤心的事写了这么多，而值得开心的事却只有这么少字数，我不擅长去写一些高兴的事，因为在遇到你之前并没有什么值得我去开心的事，导致我的笔下只有悲哀，但是如今有你啦！我们以后会有很多值得回忆的事哒！</p>
+                <p>浣浣，在以后的日子里，我们会一直在一起的，对嘛<span class="heart">❤️</span></p>
+                <p>新年快乐<span class="heart">❤️❤️❤️</span></p>
+            </div>
+            <div class="signature">
+                <div class="name">鹿鹿 上</div>
+                <div class="date">2026年2月17日</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 烟花核心代码：轻量版，适配手机，无卡顿
+        const fireworks = document.getElementById('fireworks');
+        const fireworkCount = 8; // 烟花数量，8个足够热闹，手机不卡顿
+        const duration = 1500; // 烟花持续时间：1500毫秒=1.5秒，精准匹配需求
+
+        // 生成随机数：用于烟花位置、颜色、粒子数量
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        // 生成随机喜庆颜色：红、粉、金、黄（烟花专属）
+        function getRandomColor() {
+            const colors = ['#ff2d55', '#ffd60a', '#ff77aa', '#fff176', '#ff5252', '#ff80ab'];
+            return colors[Math.floor(random(0, colors.length))];
+        }
+
+        // 创建单个烟花
+        function createFirework() {
+            // 烟花初始位置：手机屏幕随机位置
+            const x = random(20, window.innerWidth - 20);
+            const y = random(20, window.innerHeight - 20);
+            // 烟花粒子数量：30-50个，爆炸效果适中
+            const particleNum = random(30, 50);
+
+            for (let i = 0; i < particleNum; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.width = random(2, 4) + 'px';
+                particle.style.height = random(2, 4) + 'px';
+                particle.style.borderRadius = '50%';
+                particle.style.background = getRandomColor();
+                particle.style.opacity = '1';
+                particle.style.pointerEvents = 'none'; // 防止遮挡点击
+
+                fireworks.appendChild(particle);
+
+                // 粒子爆炸动画：向四周飞散，渐隐
+                const angle = random(0, Math.PI * 2); // 随机角度
+                const speed = random(1, 3); // 随机速度
+                const dx = Math.cos(angle) * speed;
+                const dy = Math.sin(angle) * speed;
+                let opacity = 1;
+
+                // 每一帧更新粒子位置和透明度
+                function update() {
+                    x += dx;
+                    y += dy;
+                    opacity -= 0.015; // 渐隐速度
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    particle.style.opacity = opacity;
+
+                    if (opacity <= 0) {
+                        fireworks.removeChild(particle); // 移除透明粒子，节省性能
+                        cancelAnimationFrame(frame);
+                    } else {
+                        frame = requestAnimationFrame(update);
+                    }
+                }
+
+                let frame = requestAnimationFrame(update);
+            }
+        }
+
+        // 循环生成烟花，1.5秒后停止
+        const fireworkTimer = setInterval(() => {
+            createFirework();
+        }, 200); // 每200ms生成一个烟花，8个刚好热闹
+
+        // 核心：1.5秒后关闭烟花，显示书信
+        setTimeout(() => {
+            clearInterval(fireworkTimer); // 停止生成烟花
+            fireworks.style.display = 'none'; // 隐藏烟花容器
+            document.querySelector('.letter-box').style.display = 'block'; // 显示书信
+            document.body.style.overflow = 'auto'; // 恢复滚动（内容过长时）
+        }, duration);
+    </script>
+</body>
+</html>
